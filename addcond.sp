@@ -3,7 +3,7 @@
 
   this plugin was modified from https://forums.alliedmods.net/showthread.php?t=200410
   depending on the game, you might want to include <tf2> and <tf2_stocks> instead of <pf2>, as this was made for pf2.
-  for tf2classic, you would replace it with <tf2classic>.
+  for tf2classic, you would replace it with <tf2c>.
 
   i might translate this to new syntax.
 
