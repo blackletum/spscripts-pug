@@ -18,14 +18,20 @@ public Plugin myinfo = {
 }
 
 #define BLOCK_LIST_SIZE 3
-#define PATH_BLOCK_LIST_SIZE 1
-
 char block_list[][] = {
     "player", "worldspawn", "tf_player_manager"
 };
 
+#define PATH_BLOCK_LIST_SIZE 1
 char path_block_list[][] = {
     "props_junk/watermelon01.mdl",
+}
+
+#define BLOCK_KEYVALS_NUM 1
+#define BLOCK_KEYVALS_SIZE (BLOCK_KEYVALS_NUM*2)
+char block_keyvals[][] = {
+    "onspawn", "player,kill",
+//    "onspawn", "forcerespawn,forcerespawn"
 }
 
 public Action EntLog(int client, const char[] command, int argc) {
@@ -54,7 +60,7 @@ public bool DoRemoveCheck(int client, const char[] command, int argc, bool autoR
     char argBuffer[MAX_NAME_LENGTH];
 
     GetCmdArg(1, argBuffer, sizeof(argBuffer));
-    PrintToServer("i got a %s", argBuffer);
+//    PrintToServer("i got a %s", argBuffer);
     for (int entname = 0; entname < BLOCK_LIST_SIZE; entname++) {
         if (StrEqual(argBuffer, block_list[entname])) {
             if (autoReply)
@@ -84,7 +90,7 @@ public void OnPluginStart() {
     AddCommandListener(OPKB_Kill, "explode");
     AddCommandListener(OPKB_Ent_Remove_All, "ent_remove_all");
     AddCommandListener(OPKB_Ent_Remove, "ent_remove");
-    AddCommandListener(OPKB_Ent_Remove_All, "ent_create");
+    AddCommandListener(OPKB_Ent_Create, "ent_create");
     AddCommandListener(OPKB_BlockEntirely, "ent_pause");
     AddCommandListener(OPKB_BlockEntirely, "mp_forcerespawnplayers");
     AddCommandListener(OPKB_BlockEntirely, "bot");
@@ -102,6 +108,29 @@ public Action OPKB_Kill(int client, const char[] command, int argc) {
 public Action OPKB_Ent_Remove_All(int client, const char[] command, int argc) {
     EntLog(client, command, argc);
     if (!DoRemoveCheck(client, command, argc, true)) return Plugin_Handled;
+    return Plugin_Continue;
+}
+
+public Action OPKB_Ent_Create(int client, const char[] command, int argc) {
+    EntLog(client, command, argc);
+    if (!DoRemoveCheck(client, command, argc, true)) return Plugin_Handled;
+    if (argc <= 2) return Plugin_Continue;
+
+    for (int keyI = 2; keyI < argc; keyI += 2)  {
+        int valI = keyI + 1;
+        char key[MAX_NAME_LENGTH];
+        char val[MAX_NAME_LENGTH];
+        GetCmdArg(keyI, key, sizeof(key));
+        GetCmdArg(valI, val, sizeof(val));
+        for (int i = 0; i < BLOCK_KEYVALS_SIZE; i += 2) {
+            char noQuotes[MAX_NAME_LENGTH];
+            strcopy(noQuotes, sizeof(noQuotes), val);
+            ReplaceString(noQuotes, sizeof(noQuotes), "\"", "", false);
+            if (StrEqual(key, block_keyvals[i], false) &&
+                StrEqual(noQuotes, block_keyvals[i + 1])) return Plugin_Handled;
+        }
+    }
+
     return Plugin_Continue;
 }
 
@@ -131,6 +160,8 @@ public Action OPKB_Ent_Create(int client, const char[] command, int argc) {
     return Plugin_Continue;
 }
 */
+
+
 
 public Action OPKB_Ent_Remove(int client, const char[] command, int argc) {
     EntLog(client, command, argc);
