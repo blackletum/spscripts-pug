@@ -1,3 +1,4 @@
+# this is archived in favor of <https://github.com/oaktownmc/spscripts>
 # spscripts
 quick sourcepawn scripts
 
